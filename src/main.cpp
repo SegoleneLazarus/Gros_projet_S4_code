@@ -20,7 +20,7 @@ int main()
     bdt.ypos     = 0;
     bdt.vitesse  = 0.01;
     bdt.angle    = 0;
-    boids_tab[0] = bdt;
+    boids_tab[0].push_back(bdt);
     boids_deplacement(boids_tab, 1);
     // Declare your infinite update loop.
     ctx.update = [&]() {
