@@ -21,7 +21,7 @@ int main()
     bdt.vitesse  = 0.01;
     bdt.angle    = 0;
     boids_tab[0] = bdt;
-    deplacement_boids(boids_tab, 1);
+    boids_deplacement(boids_tab, 1);
     // Declare your infinite update loop.
     ctx.update = [&]() {
         ctx.background(p6::NamedColor::Yellow);
