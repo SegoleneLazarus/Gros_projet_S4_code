@@ -33,8 +33,12 @@ int main()
     auto ctx = p6::Context{{.title = "Simple-p6-Setup"}};
     ctx.maximize_window();
     std::vector<Boids> boids_tab;
-    Boids              bdt();
-    boids_tab.push_back(bdt);
+    int                nombre_boids = 20;
+    Boids              bdt{};
+    for (int i = 0; i < nombre_boids; i++)
+    {
+        boids_tab.push_back(bdt);
+    }
     // Declare your infinite update loop.
     ctx.update = [&]() {
         ctx.background(p6::NamedColor::Yellow);
@@ -43,10 +47,14 @@ int main()
             p6::Center{ctx.mouse()},
             p6::Radius{0.2f}
         );
-        ctx.circle(
-            p6::Center{boids_tab[0].pos},
-            p6::Radius{0.02f}
-        );
+        for (int i = 0; i < nombre_boids;i++)
+        {
+            ctx.circle(
+                p6::Center{boids_tab[i].pos},
+                p6::Radius{0.02f}
+            );
+        }
+            
 
         // float xvit = boids_tab[0].vit.x;
         // float yvit = boids_tab[0].vit.y;
@@ -57,7 +65,7 @@ int main()
         //     -vecTemp+boids_tab[0].pos
         // );
 
-        boids_deplacement(boids_tab, 1);
+        boids_deplacement(boids_tab, nombre_boids);
 
     };
 

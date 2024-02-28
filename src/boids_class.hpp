@@ -4,33 +4,55 @@
 #include <time.h>
 
 
-double fonction_rand() {
-        thread_local std::default_random_engine gen{std::random_device{}()};
-        thread_local auto distrib =
-            std::uniform_real_distribution<double>{0.0, 1.0};
+double fonction_rand();
 
-        return distrib(gen);
-};
+int pile_ou_face(float p);
 
-int pile_ou_face(float p) {
-        double random = fonction_rand();
-        return random > p ? 0 : 1;
-};
-
-float random_float(float max) {
-    float random_float_max1_minm1;
-    
-    random_float_max1_minm1= fonction_rand()*max;
-    if (pile_ou_face(0.5) == 0)
-        return -random_float_max1_minm1;
-    return random_float_max1_minm1;
-};
+float random_float(float max);
 
 struct Boids 
 {
     glm::vec2 pos;
     glm::vec2 vit;
+    float separationRadius;
 
-    Boids() : pos(random_float(1), -1), vit(random_float(0.01),0.01){}
+    Boids() : pos(0,0), vit(0,0), separationRadius(-0.001){};
+    //Boids() : pos(random_float(1), -1), vit(random_float(0.01),0.01), separationRadius(0.001){};
     
+    void separationBoid(const std::vector<Boids>& boids, float separationForce) {
+        glm::vec2 separation(0.0f, 0.0f);
+        int count = 0;
+
+        for (const auto& other : boids) {
+            if (&other != this) {
+                float distance = glm::distance(other.pos, pos);
+                if (distance < separationRadius) {
+                    separation += (pos - other.pos);
+                    count++;
+                }
+            }
+        }
+
+        if (count > 0) {
+            separation /= static_cast<float>(count);
+            glm::normalize(separation);
+            vit += separation * separationForce;
+        }
+    }
+
+    void initializer(Boids& boidy)
+    {
+        if(boidy.separationRadius<0)
+        {
+            glm::vec2 pos(random_float(1), -1);
+            glm::vec2 vit(random_float(0.01),0.01);
+
+            boidy.pos = pos;
+            boidy.vit = vit;
+            boidy.separationRadius = 0.001;
+        }        
+            
+    }
 };
+
+float distanceVect(const glm::vec2& v1, const glm::vec2& v2);

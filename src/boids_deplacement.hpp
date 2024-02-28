@@ -6,3 +6,5 @@
 
 
 void boids_deplacement(std::vector<Boids> &boids_tab, int nombre_boids);
+
+Boids limites(Boids boidy);
