@@ -1,5 +1,6 @@
 #pragma once
 #include <time.h>
+#include <cstdlib>
 #include <iostream>
 #include <random>
 #include "glm/glm.hpp"
@@ -20,29 +21,33 @@ struct Boids {
         : pos(0, 0), vit(0, 0), separationRadius(-0.001), cohesionRadius(0.1){};
     // Boids() : pos(random_float(1), -1), vit(random_float(0.01),0.01), separationRadius(0.001){};
 
-    void separationBoid(const std::vector<Boids>& boids, float separationForce)
+    void separation(const std::vector<Boids>& boids_tab, float separationForce)
     {
-        glm::vec2 separation(0.0f, 0.0f);
-        int       count = 0;
+        float     distance_min = 10;
+        glm::vec2 separation_min(0.0f, 0.0f);
+        // int       count = 0;
 
-        for (const auto& other : boids)
+        for (const auto& other : boids_tab)
         {
             if (&other != this)
             {
                 float distance = glm::distance(other.pos, pos);
-                if (distance < separationRadius)
+                if (distance < distance_min)
                 {
-                    separation += (pos - other.pos);
-                    count++;
+                    separation_min = (pos - other.pos);
+                    // count++;
                 }
             }
         }
 
-        if (count > 0)
+        // if (count > 0)
+        // separation /= static_cast<float>(count);
+        // glm::normalize(separation);
+        if (distance_min < separationRadius)
         {
-            separation /= static_cast<float>(count);
-            glm::normalize(separation);
-            vit += separation * separationForce;
+            std::cout << int(1 / distance_min) << std::endl;
+            // vit = (vit + 1/separation_min * glm::vec2(separationForce + int(1 / distance_min), separationForce + (1 / distance_min))) / glm::vec2(separationForce + int(1 / distance_min) + 1, separationForce + 1 / distance_min + 1);
+            vit = (vit + glm::vec2(1 / separation_min.x, 1 / separation_min.y) * glm::vec2(separationForce, separationForce)) / glm::vec2(separationForce + 1, separationForce + 1);
         }
     }
 
@@ -66,7 +71,7 @@ struct Boids {
         if (distance_min > this->cohesionRadius)
         {
             // le boid se rapproche du boid le plus proche, ça veut dire qu'on fait la moyenne des deux boids
-            this->vit = (this->vit + vit_boid_mini * glm::vec2(cohesionForce, cohesionForce)) / glm::vec2(2, 2);
+            this->vit = (this->vit + vit_boid_mini * glm::vec2(cohesionForce, cohesionForce)) / glm::vec2(cohesionForce + 1, cohesionForce + 1);
         }
     }
 
@@ -79,8 +84,8 @@ struct Boids {
 
             this->pos              = pos;
             this->vit              = vit;
-            this->separationRadius = 0.002;
-            this->cohesionRadius   = 0.005;
+            this->separationRadius = 0.1;
+            this->cohesionRadius   = 0.001;
         }
     }
 };
