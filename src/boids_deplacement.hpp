@@ -1,6 +1,5 @@
 #pragma once
 #include "boids_class.hpp"
-#include <iostream>
 #include <cmath>
 #include <vector>
 

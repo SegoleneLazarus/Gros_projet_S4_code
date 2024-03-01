@@ -1,27 +1,20 @@
 #include <cstdlib>
 #define DOCTEST_CONFIG_IMPLEMENT
+#include <time.h>
+#include <random>
 #include "boids_class.hpp"
 #include "boids_deplacement.hpp"
 #include "doctest/doctest.h"
 #include "p6/p6.h"
-#include <random>
-#include <time.h>
 
-void separation(){
+void separation()
+{
     // deux boids ne peuvent pas être trop proches, ils doivent donc s'éloigner l'un de l'autre à partir d'une certaine distance
-
 }
 
-void cohesion(){
-    
+void alignement()
+{
 }
-
-void alignement(){
-    
-}
-
-
-
 
 int main()
 {
@@ -37,7 +30,9 @@ int main()
     Boids              bdt{};
     for (int i = 0; i < nombre_boids; i++)
     {
+        bdt.boid_initializer();
         boids_tab.push_back(bdt);
+        bdt.separationRadius = -0.001;
     }
     // Declare your infinite update loop.
     ctx.update = [&]() {
@@ -47,14 +42,14 @@ int main()
             p6::Center{ctx.mouse()},
             p6::Radius{0.2f}
         );
-        for (int i = 0; i < nombre_boids;i++)
+        for (int i = 0; i < nombre_boids; i++)
         {
             ctx.circle(
                 p6::Center{boids_tab[i].pos},
                 p6::Radius{0.02f}
             );
+            boids_tab[i].cohesion(boids_tab, 1);
         }
-            
 
         // float xvit = boids_tab[0].vit.x;
         // float yvit = boids_tab[0].vit.y;
@@ -66,7 +61,6 @@ int main()
         // );
 
         boids_deplacement(boids_tab, nombre_boids);
-
     };
 
     // Should be done last. It starts the infinite loop.
