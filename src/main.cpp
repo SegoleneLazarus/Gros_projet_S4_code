@@ -20,7 +20,7 @@ int main()
     auto ctx = p6::Context{{.title = "Simple-p6-Setup"}};
     ctx.maximize_window();
     std::vector<Boids> boids_tab;
-    int                nombre_boids = 2;
+    int                nombre_boids = 20;
     Boids              bdt{};
     for (int i = 0; i < nombre_boids; i++)
     {
@@ -42,8 +42,8 @@ int main()
                 p6::Center{boids_tab[i].pos},
                 p6::Radius{0.02f}
             );
-            boids_tab[i].cohesion(boids_tab, 0);
-            boids_tab[i].separation(boids_tab, 2);
+            boids_tab[i].cohesion2(boids_tab, 0.01);
+            boids_tab[i].separation(boids_tab, 1);
         }
 
         // float xvit = boids_tab[0].vit.x;

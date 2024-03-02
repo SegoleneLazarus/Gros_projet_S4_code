@@ -33,3 +33,11 @@ float distanceVect(const glm::vec2& v1, const glm::vec2& v2) {
 
     return distance;
 }
+
+glm::vec2 normalize_to_vit(glm::vec2 pos, glm::vec2 vit)
+{
+    // this fonction allows to normalize a position to the length of a speed (vit as vitesse), it is usefull if I want to use a difference of position between 2 boids to change the speed of one of them (cohesion, separation)
+    float length_vit = glm::length(vit);
+    pos              = normalize(pos) * length_vit;
+    return pos;
+}
