@@ -32,18 +32,25 @@ struct Boids {
 
         // int       count = 0;
         float distance=0;
+        
         for (const auto& other : boids_tab)
         {
             if (&other != this)
             {
                 distance = glm::distance(other.pos, pos);
+                
                 if (distance < distance_min)
                 {
+                    // std::cout << distance_min << std::endl;
                     this_minus_other_pos = pos - other.pos;
+                    // separation += (pos - other.pos);
                     // count++;
                 }
             }
         }
+        // separation = glm::normalize(separation);
+
+        // vit += separation * separationForce;
 
         // if (count > 0)
         // separation /= static_cast<float>(count);
@@ -88,19 +95,23 @@ struct Boids {
     void cohesion2(std::vector<Boids>& boids_tab, float cohesionForce)
     {
         // version où tout les autres boids influencent la direction de notre boid de manière inversement proportionelle à la distance
-        glm::vec2 this_minus_other_pos(0.0f, 0.0f);
-
+        //glm::vec2 this_minus_other_pos(0.0f, 0.0f);
+        glm::vec2 somme_other_dif_pos(0.0f, 0.0f);
         for (const auto& other : boids_tab)
         {
+            
             if (&other != this)
             {
                 float distance       = glm::distance(other.pos, pos);
-                this_minus_other_pos = pos - other.pos;
+                //this_minus_other_pos = pos - other.pos;
+                somme_other_dif_pos+=(pos - other.pos)*(1/(distance*distance*distance));
                 // j'additionne la différence de position(son opposé parce que sinon ça l'éloigne) et la vitesse du boid afin que le boid se rapproche et je normalize
                 // vit = normalize_to_vit(vit - normalize_to_vit(this_minus_other_pos, vit) * glm::vec2(cohesionForce * (1 / distance) * (1 / distance), cohesionForce * (1 / distance) * (1 / distance)), vit);
-                vit = normalize_to_vit(vit - normalize_to_vit(this_minus_other_pos, vit) * cohesionForce * (1 / distance), vit);
+                //vit = normalize_to_vit(vit - normalize_to_vit(this_minus_other_pos, vit) * cohesionForce * (1 / distance), vit);
             }
         }
+        vit = normalize_to_vit(vit - normalize_to_vit(somme_other_dif_pos, vit) * cohesionForce, vit);
+
     }
 
     void boid_initializer()
@@ -112,8 +123,8 @@ struct Boids {
 
             this->pos              = pos;
             this->vit              = vit;
-            this->separationRadius = 0.1;
-            this->cohesionRadius   = 0.001;
+            this->separationRadius = 0.5;
+            this->cohesionRadius   = 0.001;//inutile à présent
         }
     }
 };

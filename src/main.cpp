@@ -42,8 +42,8 @@ int main()
                 p6::Center{boids_tab[i].pos},
                 p6::Radius{0.02f}
             );
-            boids_tab[i].cohesion2(boids_tab, 0.01);
-            boids_tab[i].separation(boids_tab, 1);
+            boids_tab[i].cohesion2(boids_tab, 0.1);
+            boids_tab[i].separation(boids_tab, 100000);
         }
 
         // float xvit = boids_tab[0].vit.x;
