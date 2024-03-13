@@ -6,10 +6,6 @@
 #include "doctest/doctest.h"
 #include "p6/p6.h"
 
-void alignement()
-{
-}
-
 int main()
 {
     // Run the tests
@@ -24,7 +20,7 @@ int main()
     Boids              bdt{};
     for (int i = 0; i < nombre_boids; i++)
     {
-        bdt.boid_initializer();
+        bdt.boid_initializer(0.05, 0.03, 0.3);
         boids_tab.push_back(bdt);
         bdt.separationRadius = -0.001;
     }
@@ -42,8 +38,9 @@ int main()
                 p6::Center{boids_tab[i].pos},
                 p6::Radius{0.02f}
             );
+            boids_tab[i].alignement(boids_tab, 0.1);
             boids_tab[i].cohesion2(boids_tab, 0.1);
-            boids_tab[i].separation(boids_tab, 0.0001);
+            boids_tab[i].separation(boids_tab, 0.01);
         }
 
         // float xvit = boids_tab[0].vit.x;
