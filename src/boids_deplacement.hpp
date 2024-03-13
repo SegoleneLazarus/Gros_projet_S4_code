@@ -1,9 +1,5 @@
 #pragma once
-#include "boids_class.hpp"
-#include <cmath>
 #include <vector>
+#include "boid_class.hpp"
 
-
-void boids_deplacement(std::vector<Boids> &boids_tab, int nombre_boids);
-
-Boids limites(Boids boidy);
+Boid limites(Boid boidy);

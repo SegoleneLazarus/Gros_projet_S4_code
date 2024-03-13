@@ -1,4 +1,4 @@
-#include "boids_class.hpp"
+#include "boid_class.hpp"
 
 double fonction_rand() {
         thread_local std::default_random_engine gen{std::random_device{}()};
@@ -8,7 +8,7 @@ double fonction_rand() {
         return distrib(gen);
 };
 
-struct Boids boids;
+struct Boid boids;
 
 int pile_ou_face(float p) {
         double random = fonction_rand();

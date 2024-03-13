@@ -1,5 +1,6 @@
 #pragma once
 #include <time.h>
+#include <cmath>
 #include <cstdlib>
 #include <iostream>
 #include <random>
@@ -16,18 +17,26 @@ float distanceVect(const glm::vec2& v1, const glm::vec2& v2);
 
 glm::vec2 normalize_to_vit(glm::vec2 pos, glm::vec2 vit);
 
-struct Boids {
+struct Boid {
     glm::vec2 pos;
     glm::vec2 vit;
     float     separationRadius;
     float     cohesionRadius;
     float     alignementRadius;
 
-    Boids()
+    Boid()
         : pos(0, 0), vit(0, 0), separationRadius(-0.001), cohesionRadius(0.1), alignementRadius(0.1){};
-    // Boids() : pos(random_float(1), -1), vit(random_float(0.01),0.01), separationRadius(0.001){};
+    // Boid() : pos(random_float(1), -1), vit(random_float(0.01),0.01), separationRadius(0.001){};
 
-    void alignement(const std::vector<Boids>& boids_tab, float alignementForce)
+    void limites()
+    {
+        if (abs(pos.x) >= 1)
+            pos.x = -pos.x / abs(pos.x);
+        if (abs(pos.y) >= 1)
+            pos.y = -pos.y / abs(pos.y);
+    }
+
+    void alignement(const std::vector<Boid>& boids_tab, float alignementForce)
     {
         glm::vec2 somme_vit(0.0f, 0.0f);
         float     nb_Bproches = 0;
@@ -40,10 +49,10 @@ struct Boids {
                 nb_Bproches++;
             }
         }
-        vit = normalize_to_vit(vit + somme_vit * (1 / nb_Bproches), vit);
+        vit = normalize_to_vit(vit + somme_vit * (1.f / nb_Bproches) * alignementForce * 10.f, vit);
     }
 
-    void separation(const std::vector<Boids>& boids_tab, float separationForce)
+    void separation(const std::vector<Boid>& boids_tab, float separationForce)
     {
         float     distance_mini = 10;
         glm::vec2 this_minus_other_pos(0.0f, 0.0f);
@@ -79,13 +88,13 @@ struct Boids {
             // std::cout << int(1 / distance_min) << std::endl;
             //  vit = (vit + 1/separation_min * glm::vec2(separationForce + int(1 / distance_min), separationForce + (1 / distance_min))) / glm::vec2(separationForce + int(1 / distance_min) + 1, separationForce + 1 / distance_min + 1);
             //  vit = (vit + glm::vec2(1 / separation_min.x, 1 / separation_min.y) * glm::vec2(separationForce, separationForce)) / glm::vec2(separationForce + 1, separationForce + 1);
-            glm::vec2 modifier = normalize_to_vit(this_minus_other_pos, vit) * separationForce * (1 / (distance_mini * distance_mini));
-            std::cout << modifier.x << "/n" << modifier.y << std::endl;
+            glm::vec2 modifier = normalize_to_vit(this_minus_other_pos, vit) * separationForce * (1.f / (distance_mini * 20));
+            // std::cout << modifier.x << "/n" << modifier.y << std::endl;
             vit = normalize_to_vit(vit + modifier, vit);
         }
     }
 
-    void cohesion2(std::vector<Boids>& boids_tab, float cohesionForce)
+    void cohesion2(std::vector<Boid>& boids_tab, float cohesionForce)
     {
         // version où tout les autres boids influencent la direction de notre boid de manière inversement proportionelle à la distance
         // glm::vec2 this_minus_other_pos(0.0f, 0.0f);
@@ -97,11 +106,11 @@ struct Boids {
                 float distance = glm::distance(other.pos, pos);
                 if (distance > this->cohesionRadius)
                 {
-                    somme_other_dif_pos += (pos - other.pos) * (1 / (distance * distance * distance));
+                    somme_other_dif_pos += (pos - other.pos) * (1.f / (distance));
                 }
             }
         }
-        vit = normalize_to_vit(vit - normalize_to_vit(somme_other_dif_pos, vit) * cohesionForce, vit);
+        vit = normalize_to_vit(vit - normalize_to_vit(somme_other_dif_pos, vit) * cohesionForce * (1.f / 10), vit);
     }
 
     void boid_initializer(float sepRad, float cohRad, float aliRad)
